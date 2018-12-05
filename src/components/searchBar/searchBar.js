@@ -15,7 +15,9 @@ class SearchBar extends Component {
     onChange(event) {
         this.setState({ term: event.target.value });
 
-        const url = `https://busbud-search.herokuapp.com/suggestions?q=${event.target.value}`;
+        const apiUrl = process.env.apiUrl || 'https://busbud-search.herokuapp.com';
+
+        const url = apiUrl + `/suggestions?q=${event.target.value}`;
 
         fetch(url)
         .then(response => response.json())
@@ -24,9 +26,15 @@ class SearchBar extends Component {
     }
 
     render() {
+        const results = Object.keys(this.state.suggestions).map(key => {
 
-        const results = Object.keys(this.state.suggestions).map(key =>
-            <li>{this.state.suggestions[key].name} (lat: {this.state.suggestions[key].latitude}, long: {this.state.suggestions[key].longitude})</li> 
+            if (key in this.state.suggestions) {
+                return <li>{this.state.suggestions[key].name} (lat: {this.state.suggestions[key].latitude}, long: {this.state.suggestions[key].longitude})</li>
+            }
+
+            return {};
+
+            }
         );
         
         return (
