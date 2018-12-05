@@ -1,5 +1,9 @@
+import BMap from '../BMap/BMap';
+import FontAwesome from 'react-fontawesome';
 import React, { Component } from 'react';
-import './searchBar.css'
+import './SearchBar.css';
+
+const apiUrl = process.env.apiUrl || 'https://busbud-search.herokuapp.com';
 
 class SearchBar extends Component {
 
@@ -8,21 +12,36 @@ class SearchBar extends Component {
         this.state = {
             term: '',
             suggestions: {},
-            error: ''
+            error: '',
+            showMap: false,
+            lat: '43.70011',
+            long: '-79.4163'
         };
+
+        this.changeMarkerPosition = this.changeMarkerPosition.bind(this);
     }
 
     onChange(event) {
         this.setState({ term: event.target.value });
 
-        const apiUrl = process.env.apiUrl || 'https://busbud-search.herokuapp.com';
+        var url = apiUrl + `/suggestions?q=${event.target.value}`;
 
-        const url = apiUrl + `/suggestions?q=${event.target.value}`;
+        if (this.state.lat !== '' && this.state.long !== '') {
+            url += `&latitude=${this.state.lat}&longitude=${this.state.long}`;
+        }
 
         fetch(url)
         .then(response => response.json())
         .then(data => this.setState({ term: '', suggestions: data.suggestions, error: ''}))
         .catch(e => this.setState({error: 'Cannot request API, please retry.'}));
+    }
+
+    toggleMap(event) {
+        this.setState(prevState => ({ showMap: !prevState.showMap}));
+    }
+
+    changeMarkerPosition(lat, long) {
+        this.setState(prevState => ({ lat: lat, long: long, showMap: !prevState.showMap}) );
     }
 
     render() {
@@ -39,7 +58,17 @@ class SearchBar extends Component {
         
         return (
             <div className="SearchBar">
+
+                {
+                    !this.state.showMap ? null : (
+                        <div id="mapPopup">
+                            <BMap markerHandler={this.changeMarkerPosition} lat={this.state.lat} long={this.state.long} />
+                        </div>
+                    )
+                }
+                
                 <input type="text" onChange={(e) => this.onChange(e)} placeholder="Search for a city (eg. London, Washington...)"/>
+                <a href="#/" className="toggleMap" onClick={(e) => this.toggleMap(e)}><FontAwesome name="map-marker" size="2x"/></a>
                 {
                     results.length === 0 ? null : (
                     <div id="autocomplete">
@@ -60,7 +89,7 @@ class SearchBar extends Component {
                 
                 <div id="results">
                 </div>
-            </div>
+            </div>            
         );
     }
 }
