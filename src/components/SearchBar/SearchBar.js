@@ -48,7 +48,7 @@ class SearchBar extends Component {
         const results = Object.keys(this.state.suggestions).map(key => {
 
             if (key in this.state.suggestions) {
-                return <li>{this.state.suggestions[key].name} (lat: {this.state.suggestions[key].latitude}, long: {this.state.suggestions[key].longitude})</li>
+                return <li>{this.state.suggestions[key].name}</li>
             }
 
             return {};
