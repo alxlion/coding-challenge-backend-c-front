@@ -15,7 +15,8 @@
     -moz-transition: all 0.3s linear;
     -ms-transition: all 0.3s linear;
     -o-transition: all 0.3s linear;
-    transition: all 0.3s linear;    
+    transition: all 0.3s linear;
+    outline: 0;
 }
 
 .SearchBar input[type=text]:focus {
