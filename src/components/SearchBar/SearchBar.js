@@ -21,10 +21,9 @@ class SearchBar extends Component {
         this.changeMarkerPosition = this.changeMarkerPosition.bind(this);
     }
 
-    onChange(event) {
-        this.setState({ term: event.target.value });
+    searchCity(term) {
 
-        var url = apiUrl + `/suggestions?q=${event.target.value}`;
+        var url = apiUrl + `/suggestions?q=${term}`;
 
         if (this.state.lat !== '' && this.state.long !== '') {
             url += `&latitude=${this.state.lat}&longitude=${this.state.long}`;
@@ -32,8 +31,14 @@ class SearchBar extends Component {
 
         fetch(url)
         .then(response => response.json())
-        .then(data => this.setState({ term: '', suggestions: data.suggestions, error: ''}))
+        .then(data => this.setState({ suggestions: data.suggestions, error: ''}))
         .catch(e => this.setState({error: 'Cannot request API, please retry.'}));
+    }
+
+    onChange(event) {
+        this.setState({ term: event.target.value });
+        this.searchCity(event.target.value);
+        
     }
 
     toggleMap(event) {
@@ -42,20 +47,23 @@ class SearchBar extends Component {
 
     changeMarkerPosition(lat, long) {
         this.setState(prevState => ({ lat: lat, long: long, showMap: !prevState.showMap}) );
+        this.searchCity(this.state.term);
     }
 
     render() {
+
+
         const results = Object.keys(this.state.suggestions).map(key => {
 
-            if (key in this.state.suggestions) {
-                return <li>{this.state.suggestions[key].name}</li>
-            }
+                if (key in this.state.suggestions && this.state.suggestions[key] !== null) {
+                    return <li>{this.state.suggestions[key].name}</li>
+                }
 
-            return {};
+                return [];
+                
+                }
+            );
 
-            }
-        );
-        
         return (
             <div className="SearchBar">
 
@@ -67,7 +75,7 @@ class SearchBar extends Component {
                     )
                 }
                 
-                <input type="text" onChange={(e) => this.onChange(e)} placeholder="Search for a city (eg. London, Washington...)"/>
+                <input type="text" onChange={(e) => this.onChange(e)} placeholder="Search for a city (eg. Montreal, Washington...)"/>
                 <a href="#/" className="toggleMap" onClick={(e) => this.toggleMap(e)}><FontAwesome name="map-marker" size="2x"/></a>
                 {
                     results.length === 0 ? null : (

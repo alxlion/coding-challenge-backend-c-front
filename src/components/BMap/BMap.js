@@ -32,7 +32,7 @@ class BMap extends Component {
     const position = [this.state.lat, this.state.long];
 
     return (
-        <Map center={position} zoom={5} onClick={(e) => this.onClickMap(e)}>
+        <Map center={position} zoom={3} onClick={(e) => this.onClickMap(e)}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
