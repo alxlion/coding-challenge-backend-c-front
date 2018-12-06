@@ -3,7 +3,7 @@ import FontAwesome from 'react-fontawesome';
 import React, { Component } from 'react';
 import './SearchBar.css';
 
-const apiUrl = process.env.apiUrl || 'https://busbud-search.herokuapp.com';
+const apiUrl = process.env.API_URL || 'https://busbud-search.herokuapp.com';
 
 class SearchBar extends Component {
 
