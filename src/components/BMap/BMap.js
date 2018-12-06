@@ -35,7 +35,7 @@ class BMap extends Component {
         <Map center={position} zoom={3} onClick={(e) => this.onClickMap(e)}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+          attribution=""
         />
         <Marker position={position}>
         </Marker>

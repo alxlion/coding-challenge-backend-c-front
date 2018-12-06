@@ -14,6 +14,7 @@ class SearchBar extends Component {
             suggestions: {},
             error: '',
             showMap: false,
+            enabledMap: true,
             lat: '43.70011',
             long: '-79.4163'
         };
@@ -25,7 +26,7 @@ class SearchBar extends Component {
 
         var url = apiUrl + `/suggestions?q=${term}`;
 
-        if (this.state.lat !== '' && this.state.long !== '') {
+        if ((this.state.lat !== '' && this.state.long !== '') && this.state.enabledMap) {
             url += `&latitude=${this.state.lat}&longitude=${this.state.long}`;
         }
 
@@ -38,16 +39,20 @@ class SearchBar extends Component {
     onChange(event) {
         this.setState({ term: event.target.value });
         this.searchCity(event.target.value);
-        
     }
 
     toggleMap(event) {
         this.setState(prevState => ({ showMap: !prevState.showMap}));
     }
 
+    toggleMapFunction(event) {
+        this.setState(prevState => ({ enabledMap: !prevState.enabledMap}), () => {
+            this.searchCity(this.state.term);
+        });
+    }
+
     changeMarkerPosition(lat, long) {
-        this.setState(prevState => ({ lat: lat, long: long, showMap: !prevState.showMap}) );
-        this.searchCity(this.state.term);
+        this.setState(prevState => ({ lat: lat, long: long, showMap: !prevState.showMap}), () => this.searchCity(this.state.term));
     }
 
     render() {
@@ -70,6 +75,18 @@ class SearchBar extends Component {
                 {
                     !this.state.showMap ? null : (
                         <div id="mapPopup">
+                            <label>
+                                <span>Enable location </span>
+                                <input type="checkbox" checked={this.state.enabledMap} onChange={(e) => this.toggleMapFunction(e)} />
+                            </label>
+                            {
+                                this.state.enabledMap ? null : (
+                                <div id="overlay">
+                                Map disabled
+                                </div>
+                                )
+                            }
+                            
                             <BMap markerHandler={this.changeMarkerPosition} lat={this.state.lat} long={this.state.long} />
                         </div>
                     )
